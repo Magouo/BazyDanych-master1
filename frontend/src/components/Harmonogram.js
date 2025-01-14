@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData } from '../api';
-import { Link } from 'react-router-dom';
+import './Common.css'; // Import the common CSS file
 
-const Harmonogram = ({ isAdmin }) => {
+const Harmonogram = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
-            const endpoint = 'spotkania/';
-            const result = await fetchData(endpoint);
+            const result = await fetchData('spotkania/');
             setData(result);
         };
         getData();
-    }, [isAdmin]);
+    }, []);
 
     return (
-        <div>
-            <h1>Harmonogram</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-            <Link to="/">Powrót do Home</Link>
+        <div className="container">
+            <h1>Harmonogramy</h1>
+            {data.length > 0 ? (
+                data.map((item) => (
+                    <div key={item.id} className="data-block">
+                        <p><strong>ID:</strong> {item.id}</p>
+                        <p><strong>Tytuł:</strong> {item.tytul}</p>
+                        <p><strong>Data Spotkania:</strong> {item.data_spotkania}</p>
+                        <p><strong>Czas Spotkania:</strong> {item.czas_spotkania}</p>
+                        <p><strong>Opis:</strong> {item.opis}</p>
+                        <p><strong>Uczestnicy:</strong> {item.uczestnicy.map(u => u.first_name + ' ' + u.last_name).join(', ')}</p>
+                    </div>
+                ))
+            ) : (
+                <p>Brak danych do wyświetlenia</p>
+            )}
         </div>
     );
 };

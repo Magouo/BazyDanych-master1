@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData, postData, updateData } from '../api';
 import { Link, useParams } from 'react-router-dom';
+import './Common.css'; // Import the common CSS file
 
 const Usterka = ({ isAdmin }) => {
     const { id } = useParams();
@@ -39,7 +40,7 @@ const Usterka = ({ isAdmin }) => {
     };
 
     const handleUpdateUsterka = async () => {
-        if (isAdmin) {
+        if (!isAdmin) {
             alert('Only admins can change the status');
             return;
         }
@@ -70,7 +71,7 @@ const Usterka = ({ isAdmin }) => {
 
     if (id && usterka) {
         return (
-            <div>
+            <div className="container">
                 <h1>Usterka</h1>
                 <p>{usterka.opis}</p>
                 <select
@@ -88,9 +89,29 @@ const Usterka = ({ isAdmin }) => {
     }
 
     return (
-        <div>
-            <h1>Usterka</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+        <div className="container">
+            <h1>Usterki</h1>
+            {data.map((item) => (
+                <div key={item.id} className="usterka-block">
+                    <p><strong>ID:</strong> {item.id}</p>
+                    <p><strong>Mieszkaniec:</strong> {item.mieszkaniec}</p>
+                    <p><strong>Opis:</strong> {item.opis}</p>
+                    <p><strong>Status:</strong> {item.status}</p>
+                    {isAdmin && (
+                        <div>
+                            <select
+                                value={item.status}
+                                onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                            >
+                                <option value="nowa">Nowa</option>
+                                <option value="w trakcie">W trakcie</option>
+                                <option value="naprawiona">Naprawiona</option>
+                            </select>
+                            <button onClick={() => handleUpdateStatus(item.id, item.status)}>Zaktualizuj status</button>
+                        </div>
+                    )}
+                </div>
+            ))}
             <Link to="/">Powrót do Home</Link>
             {!isAdmin && (
                 <div>
@@ -101,27 +122,6 @@ const Usterka = ({ isAdmin }) => {
                         placeholder="Dodaj nową usterkę"
                     />
                     <button onClick={handleAddUsterka}>Dodaj</button>
-                </div>
-            )}
-            {isAdmin && (
-                <div>
-                    {data.map((item) => (
-                        <div key={item.id}>
-                            <p>{item.opis}</p>
-                            <Link to={`/usterki/admin/${item.id}`}>Edytuj</Link>
-                            <div>
-                                <select
-                                    value={item.status}
-                                    onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                >
-                                    <option value="nowa">Nowa</option>
-                                    <option value="w trakcie">W trakcie</option>
-                                    <option value="naprawiona">Naprawiona</option>
-                                </select>
-                                <button onClick={() => handleUpdateStatus(item.id, item.status)}>Zaktualizuj status</button>
-                            </div>
-                        </div>
-                    ))}
                 </div>
             )}
         </div>

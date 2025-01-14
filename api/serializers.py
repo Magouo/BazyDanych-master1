@@ -28,7 +28,7 @@ class UsterkaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usterka
         fields = ['id', 'mieszkaniec', 'opis', 'status']
-        read_only_fields = ['mieszkaniec', 'status']
+        read_only_fields = ['mieszkaniec']
 
 class UchwalaSerializer(serializers.ModelSerializer):
     class Meta:

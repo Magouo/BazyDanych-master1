@@ -3,6 +3,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .models import Mieszkaniec, Uchwala, Harmonogram, Usterka, Licznik, Rozliczenie
 from .serializers import MieszkaniecSerializer, UchwalaSerializer, HarmonogramSerializer, UsterkaSerializer, LicznikSerializer, RozliczenieSerializer
 from .permissions import IsAdminOrReadOnly
@@ -93,8 +95,7 @@ class UsterkaAdminView(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         if not self.request.user.is_staff:
             raise PermissionDenied("Only admins can update issues.")
-        serializer.save()
-        # Optionally, you can add additional logic here if needed
+        serializer.save(partial=True)
 
 class LicznikViewSet(viewsets.ModelViewSet):
     """
@@ -139,3 +140,17 @@ class UpdateContactInfoView(generics.UpdateAPIView):
     serializer_class = MieszkaniecSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = [IsAuthenticated]
+
+@api_view(['GET'])
+def getUserInfo(request):
+    """
+    Zwraca informacje o zalogowanym użytkowniku.
+    """
+    user = request.user
+    if not user.is_authenticated:
+        return Response(status=401)
+    return Response({
+        'id': user.id,
+        'username': user.username,
+        'is_staff': user.is_staff,
+    })

@@ -39,7 +39,7 @@ export const postData = async (endpoint, data, options = {}) => {
 export const updateData = async (endpoint, data, options = {}) => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}${endpoint}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
@@ -80,6 +80,9 @@ export const getUserInfo = async () => {
     if (response.status === 401) {
         localStorage.removeItem('token');
         window.location.reload();
+    }
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
     }
     return response.json();
 };

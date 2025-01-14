@@ -15,9 +15,20 @@ const Rozliczenia = ({ isAdmin }) => {
     }, [isAdmin]);
 
     return (
-        <div>
+        <div className="container">
             <h1>Rozliczenia</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+            {data.length > 0 ? (
+                data.map((item) => (
+                    <div key={item.id} className="data-block">
+                        <p><strong>ID:</strong> {item.id}</p>
+                        <p><strong>Typ:</strong> {item.typ}</p>
+                        <p><strong>Kwota:</strong> {item.kwota}</p>
+                        <p><strong>Data Rozliczenia:</strong> {item.data_rozliczenia}</p>
+                    </div>
+                ))
+            ) : (
+                <p>Brak danych do wyświetlenia</p>
+            )}
             <Link to="/">Powrót do Home</Link>
         </div>
     );
