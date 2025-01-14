@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Mieszkaniec, Licznik, Rozliczenie, Usterka, Uchwala, Harmonogram
-from rest_framework.authtoken.views import Token
-
+from rest_framework.authtoken.models import Token
 
 class MieszkaniecSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,9 +9,29 @@ class MieszkaniecSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        user = Mieszkaniec.objects.create_user(**validated_data)
+        user = Mieszkaniec(
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            adres=validated_data['adres'],
+            telefon=validated_data['telefon'],
+            email=validated_data['email']
+        )
+        password = validated_data.get('password')
+        if password:
+            user.set_password(password)
+        user.save()
         Token.objects.create(user=user)
         return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 class LicznikSerializer(serializers.ModelSerializer):
     class Meta:

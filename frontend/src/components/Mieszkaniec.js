@@ -15,6 +15,7 @@ const Mieszkaniec = ({ isAdmin }) => {
         email: '',
         password: ''
     });
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const getData = async () => {
@@ -34,26 +35,33 @@ const Mieszkaniec = ({ isAdmin }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isAdmin) {
-            await postData('users/', formData);
-        } else {
-            await updateData(`users/${formData.id}/`, formData);
+        try {
+            if (isAdmin && !formData.id) {
+                await postData('users/', formData);
+            } else {
+                await updateData(`users/${formData.id}/`, formData);
+            }
+            setFormData({
+                id: '',
+                username: '',
+                first_name: '',
+                last_name: '',
+                adres: '',
+                telefon: '',
+                email: '',
+                password: ''
+            });
+            setError(null);
+        } catch (err) {
+            console.error("Error updating data:", err);
+            setError("Something went wrong while updating data.");
         }
-        setFormData({
-            id: '',
-            username: '',
-            first_name: '',
-            last_name: '',
-            adres: '',
-            telefon: '',
-            email: '',
-            password: ''
-        });
     };
 
     return (
         <div className="container">
             <h1>Mieszkańcy</h1>
+            {error && <p className="error">{error}</p>}
             {isAdmin && (
                 <form onSubmit={handleSubmit}>
                     <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
@@ -76,9 +84,7 @@ const Mieszkaniec = ({ isAdmin }) => {
                         <p><strong>Adres:</strong> {item.adres}</p>
                         <p><strong>Telefon:</strong> {item.telefon}</p>
                         <p><strong>Email:</strong> {item.email}</p>
-                        {!isAdmin && (
-                            <button onClick={() => setFormData(item)}>Edytuj</button>
-                        )}
+                        <button onClick={() => setFormData(item)}>Edytuj</button>
                     </div>
                 ))
             ) : (

@@ -16,4 +16,5 @@ urlpatterns = [
     path('usterki/admin/', views.UsterkaAdminView.as_view(), name='usterki-admin-list'),
     path('usterki/admin/<int:pk>/', views.UsterkaAdminView.as_view(), name='usterki-admin-detail'),
     path('user-info/', views.getUserInfo, name='user-info'),
+    path('login/', views.login, name='login'),
 ]

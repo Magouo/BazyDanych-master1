@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import authenticate
 from .models import Mieszkaniec, Uchwala, Harmonogram, Usterka, Licznik, Rozliczenie
 from .serializers import MieszkaniecSerializer, UchwalaSerializer, HarmonogramSerializer, UsterkaSerializer, LicznikSerializer, RozliczenieSerializer
 from .permissions import IsAdminOrReadOnly
@@ -27,7 +28,7 @@ class MieszkaniecViewSet(viewsets.ModelViewSet):
     """
     Zarządza mieszkańcami.
     - Odczyt: Dostęp dla wszystkich uwierzytelnionych użytkowników.
-    - Edycja: Dostęp tylko dla administratorów (superuserów).
+    - Edycja: Dostęp tylko dla administratorów (superuserów) i właścicieli kont.
     """
     queryset = Mieszkaniec.objects.all()
     serializer_class = MieszkaniecSerializer
@@ -41,20 +42,32 @@ class MieszkaniecViewSet(viewsets.ModelViewSet):
         return Mieszkaniec.objects.filter(id=user.id)
 
     def get_permissions(self):
-        if self.action == 'create':
-            self.permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
-        elif self.action in ['update', 'partial_update']:
+        if self.action in ['create', 'update', 'partial_update']:
             self.permission_classes = [IsAuthenticated]
         else:
             self.permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
         return super().get_permissions()
 
     def perform_update(self, serializer):
-        if self.request.user.is_staff:
-            raise PermissionDenied("Admins cannot update user data.")
-        if self.request.user != serializer.instance:
+        if not self.request.user.is_staff and self.request.user != serializer.instance:
             raise PermissionDenied("You can only update your own data.")
+        password = serializer.validated_data.get('password', None)
+        if password:
+            serializer.instance.set_password(password)
         serializer.save()
+
+@api_view(['POST'])
+def login(request):
+    """
+    Loguje użytkownika i zwraca token.
+    """
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(username=username, password=password)
+    if user:
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
+    return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UchwalaViewSet(viewsets.ModelViewSet):
     """
