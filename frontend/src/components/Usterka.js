@@ -30,11 +30,13 @@ const Usterka = ({ isAdmin }) => {
             return;
         }
         try {
+            console.log('Adding usterka:', { opis: newUsterka });
             const result = await postData('usterki/', { opis: newUsterka });
             setData([...data, result]);
             setNewUsterka('');
         } catch (error) {
             console.error('Error adding usterka:', error);
+            console.error('Error details:', error.response ? error.response.data : error.message);
             alert('Failed to add usterka');
         }
     };
@@ -60,6 +62,7 @@ const Usterka = ({ isAdmin }) => {
 
     const handleUpdateStatus = async (id, status) => {
         try {
+            console.log('Updating status:', { id, status });
             const result = await updateData(`usterki/admin/${id}/`, { status });
             setData(data.map(item => item.id === id ? result : item));
             alert('Status updated successfully');
@@ -83,7 +86,7 @@ const Usterka = ({ isAdmin }) => {
                     <option value="naprawiona">Naprawiona</option>
                 </select>
                 <button onClick={handleUpdateUsterka}>Zaktualizuj status</button>
-                <Link to="/">Powrót do Home</Link>
+                <Link to="/" className="button">Powrót do Home</Link>
             </div>
         );
     }
@@ -112,7 +115,7 @@ const Usterka = ({ isAdmin }) => {
                     )}
                 </div>
             ))}
-            <Link to="/">Powrót do Home</Link>
+            <Link to="/" className="button">Powrót do Home</Link>
             {!isAdmin && (
                 <div>
                     <input

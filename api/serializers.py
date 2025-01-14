@@ -28,7 +28,23 @@ class UsterkaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usterka
         fields = ['id', 'mieszkaniec', 'opis', 'status']
-        read_only_fields = ['mieszkaniec']
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get('request', None)
+        if request and request.user.is_staff:
+            fields['status'].read_only = False
+        else:
+            fields['status'].read_only = True
+        fields['mieszkaniec'].read_only = True
+        return fields
+
+    def validate(self, data):
+        try:
+            return super().validate(data)
+        except serializers.ValidationError as e:
+            print(f"Validation error: {e}")
+            raise
 
 class UchwalaSerializer(serializers.ModelSerializer):
     class Meta:

@@ -31,6 +31,9 @@ export const postData = async (endpoint, data, options = {}) => {
     });
     const responseData = await response.json();
     if (!response.ok) {
+        console.error('Error response:', responseData);
+        console.error('Request data:', data);
+        console.error('Request options:', options);
         throw new Error(responseData.error || 'Something went wrong');
     }
     return responseData;
@@ -47,11 +50,14 @@ export const updateData = async (endpoint, data, options = {}) => {
         },
         body: JSON.stringify(data),
     });
-    if (response.status === 401) {
-        localStorage.removeItem('token');
-        window.location.reload();
+    const responseData = await response.json();
+    if (!response.ok) {
+        console.error('Error response:', responseData);
+        console.error('Request data:', data);
+        console.error('Request options:', options);
+        throw new Error(responseData.error || 'Something went wrong');
     }
-    return response.json();
+    return responseData;
 };
 
 export const login = async (username, password) => {

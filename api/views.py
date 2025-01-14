@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .models import Mieszkaniec, Uchwala, Harmonogram, Usterka, Licznik, Rozliczenie
 from .serializers import MieszkaniecSerializer, UchwalaSerializer, HarmonogramSerializer, UsterkaSerializer, LicznikSerializer, RozliczenieSerializer
 from .permissions import IsAdminOrReadOnly
@@ -80,7 +81,12 @@ class UsterkaListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         if self.request.user.is_staff:
             raise PermissionDenied("Admins cannot create new issues.")
-        serializer.save(mieszkaniec=self.request.user, status='nowa')
+        try:
+            print(f"Creating usterka with data: {serializer.validated_data}")
+            serializer.save(mieszkaniec=self.request.user, status='nowa')
+        except Exception as e:
+            print(f"Error creating usterka: {e}")
+            raise
 
 class UsterkaAdminView(generics.RetrieveUpdateAPIView):
     """
@@ -95,7 +101,13 @@ class UsterkaAdminView(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         if not self.request.user.is_staff:
             raise PermissionDenied("Only admins can update issues.")
-        serializer.save(partial=True)
+        try:
+            print(f"Updating usterka with data: {serializer.validated_data}")
+            serializer.save()
+            print(f"Updated usterka: {serializer.instance}")
+        except Exception as e:
+            print(f"Error updating usterka: {e}")
+            raise
 
 class LicznikViewSet(viewsets.ModelViewSet):
     """
