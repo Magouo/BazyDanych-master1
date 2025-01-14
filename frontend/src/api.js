@@ -11,6 +11,46 @@ export const fetchData = async (endpoint, options = {}) => {
         },
         credentials: 'include', // Umożliwia wysyłanie ciasteczek
     });
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
+    return response.json();
+};
+
+export const postData = async (endpoint, data, options = {}) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+            ...options.headers,
+        },
+        body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    if (!response.ok) {
+        throw new Error(responseData.error || 'Something went wrong');
+    }
+    return responseData;
+};
+
+export const updateData = async (endpoint, data, options = {}) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+            ...options.headers,
+        },
+        body: JSON.stringify(data),
+    });
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
     return response.json();
 };
 
@@ -37,5 +77,9 @@ export const getUserInfo = async () => {
             'Authorization': `Token ${token}`,
         },
     });
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
     return response.json();
 };

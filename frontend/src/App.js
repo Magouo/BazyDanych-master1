@@ -38,6 +38,22 @@ const App = () => {
         checkUserInfo();
     }, [isLoggedIn]);
 
+    useEffect(() => {
+        const checkUserInfo = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const userInfo = await getUserInfo();
+                if (userInfo) {
+                    setIsLoggedIn(true);
+                    setIsAdmin(userInfo.is_staff);
+                } else {
+                    localStorage.removeItem('token');
+                }
+            }
+        };
+        checkUserInfo();
+    }, []);
+
     return (
         <Router>
             <div>
@@ -51,13 +67,13 @@ const App = () => {
                     />
                 ) : (
                     <>
-
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/mieszkaniec" element={<Mieszkaniec />} />
                             <Route path="/uchwala" element={<Uchwala />} />
                             <Route path="/harmonogram" element={<Harmonogram />} />
-                            <Route path="/usterka" element={<Usterka />} />
+                            <Route path="/usterka" element={<Usterka isAdmin={isAdmin} />} />
+                            <Route path="/usterki/admin/:id" element={<Usterka isAdmin={isAdmin} />} />
                             <Route path="/liczniki" element={<Licznik />} />
                             <Route path="/rozliczenia" element={<Rozliczenia />} />
                             <Route path="*" element={<Navigate to="/" />} />

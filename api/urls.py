@@ -14,4 +14,5 @@ urlpatterns = [
     path('update-contact-info/', views.UpdateContactInfoView.as_view(), name='update_contact_info'),
     path('usterki/', views.UsterkaListCreateView.as_view(), name='usterki-list-create'),
     path('usterki/admin/', views.UsterkaAdminView.as_view(), name='usterki-admin-list'),
+    path('usterki/admin/<int:pk>/', views.UsterkaAdminView.as_view(), name='usterki-admin-detail'),
 ]
