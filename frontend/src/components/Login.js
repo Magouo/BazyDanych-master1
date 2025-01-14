@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Login = ({ username, setUsername, password, setPassword, handleLogin }) => {
+const Login = ({ username, setUsername, password, setPassword, handleLogin, handleLogout }) => {
     return (
         <div>
             <h1>Login</h1>
@@ -23,6 +23,7 @@ const Login = ({ username, setUsername, password, setPassword, handleLogin }) =>
                 </div>
                 <button type="submit">Login</button>
             </form>
+            <button onClick={handleLogout}>Logout</button>
         </div>
     );
 };

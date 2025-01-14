@@ -28,6 +28,14 @@ const App = () => {
         }
     };
 
+    const handleLogout = () => {
+        setUsername('');
+        setPassword('');
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+        localStorage.removeItem('token');
+    };
+
     useEffect(() => {
         const checkUserInfo = async () => {
             if (isLoggedIn) {
@@ -64,11 +72,12 @@ const App = () => {
                         password={password}
                         setPassword={setPassword}
                         handleLogin={handleLogin}
+                        handleLogout={handleLogout}
                     />
                 ) : (
                     <>
                         <Routes>
-                            <Route path="/" element={<Home />} />
+                            <Route path="/" element={<Home handleLogout={handleLogout} />} />
                             <Route path="/mieszkaniec" element={<Mieszkaniec />} />
                             <Route path="/uchwala" element={<Uchwala />} />
                             <Route path="/harmonogram" element={<Harmonogram />} />

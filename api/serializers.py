@@ -46,6 +46,7 @@ class UsterkaSerializer(serializers.ModelSerializer):
             print(f"Validation error: {e}")
             raise
 
+
 class UchwalaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Uchwala

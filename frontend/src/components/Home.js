@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Home = () => {
+const Home = ({ handleLogout }) => {
     return (
         <div>
             <h1>Home</h1>
@@ -13,6 +13,7 @@ const Home = () => {
                 <li><Link to= "/liczniki">Licznik</Link></li>
                 <li><Link to ="/rozliczenia">Rozliczenia</Link></li>
             </ul>
+            <button onClick={handleLogout}>Logout</button>
         </div>
     );
 };
