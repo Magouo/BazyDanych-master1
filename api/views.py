@@ -40,6 +40,22 @@ class MieszkaniecViewSet(viewsets.ModelViewSet):
             return Mieszkaniec.objects.all()
         return Mieszkaniec.objects.filter(id=user.id)
 
+    def get_permissions(self):
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+        elif self.action in ['update', 'partial_update']:
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+        return super().get_permissions()
+
+    def perform_update(self, serializer):
+        if self.request.user.is_staff:
+            raise PermissionDenied("Admins cannot update user data.")
+        if self.request.user != serializer.instance:
+            raise PermissionDenied("You can only update your own data.")
+        serializer.save()
+
 class UchwalaViewSet(viewsets.ModelViewSet):
     """
     Zarządza uchwałami.
