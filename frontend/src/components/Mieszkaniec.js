@@ -24,7 +24,7 @@ const Mieszkaniec = ({ isAdmin }) => {
             setData(result);
         };
         getData();
-    }, [isAdmin]);
+    }, []);
 
     const handleChange = (e) => {
         setFormData({
@@ -84,7 +84,9 @@ const Mieszkaniec = ({ isAdmin }) => {
                         <p><strong>Adres:</strong> {item.adres}</p>
                         <p><strong>Telefon:</strong> {item.telefon}</p>
                         <p><strong>Email:</strong> {item.email}</p>
-                        <button onClick={() => setFormData(item)}>Edytuj</button>
+                        {!isAdmin && (
+                            <button onClick={() => setFormData(item)}>Edytuj</button>
+                        )}
                     </div>
                 ))
             ) : (

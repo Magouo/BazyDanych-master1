@@ -78,7 +78,8 @@ const App = () => {
                     <>
                         <Routes>
                             <Route path="/" element={<Home handleLogout={handleLogout} />} />
-                            <Route path="/mieszkaniec" element={<Mieszkaniec />} />
+                            <Route path="/mieszkaniec" element={<Mieszkaniec isAdmin={isAdmin} />} />
+                            <Route path="/stworz-mieszkanca/" element={<Mieszkaniec isAdmin={isAdmin}/>} />
                             <Route path="/uchwala" element={<Uchwala />} />
                             <Route path="/harmonogram" element={<Harmonogram />} />
                             <Route path="/usterka" element={<Usterka isAdmin={isAdmin} />} />
