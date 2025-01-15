@@ -60,6 +60,24 @@ export const updateData = async (endpoint, data, options = {}) => {
     return responseData;
 };
 
+export const deleteData = async (endpoint, options = {}) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+            ...options.headers,
+        },
+    });
+    if (!response.ok) {
+        const responseData = await response.json();
+        console.error('Error response:', responseData);
+        throw new Error(responseData.error || 'Something went wrong');
+    }
+    return response;
+};
+
 export const login = async (username, password) => {
     const response = await fetch(`${API_URL}auth/`, {
         method: 'POST',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchData, postData } from '../api';
+import { fetchData, postData, deleteData } from '../api'; // Import deleteData function
 import './Common.css'; // Import the common CSS file
 
 const Uchwala = ({ isAdmin }) => {
@@ -42,6 +42,17 @@ const Uchwala = ({ isAdmin }) => {
         }
     };
 
+    const handleDelete = async (id) => {
+        try {
+            await deleteData(`uchwaly/${id}/`);
+            const result = await fetchData('uchwaly/');
+            setData(result);
+        } catch (err) {
+            console.error("Error deleting uchwala:", err);
+            setError("Something went wrong while deleting uchwala.");
+        }
+    };
+
     return (
         <div className="container">
             <h1>Uchwały</h1>
@@ -59,6 +70,7 @@ const Uchwala = ({ isAdmin }) => {
                     <p><strong>Tytuł:</strong> {item.tytul}</p>
                     <p><strong>Opis:</strong> {item.opis}</p>
                     <p><strong>Data Przyjęcia:</strong> {item.data_przyjecia}</p>
+                    {isAdmin && <button onClick={() => handleDelete(item.id)}>Usuń</button>}
                 </div>
             ))}
         </div>
