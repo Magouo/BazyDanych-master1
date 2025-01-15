@@ -80,7 +80,7 @@ const App = () => {
                             <Route path="/" element={<Home handleLogout={handleLogout} />} />
                             <Route path="/mieszkaniec" element={<Mieszkaniec isAdmin={isAdmin} />} />
                             <Route path="/stworz-mieszkanca/" element={<Mieszkaniec isAdmin={isAdmin}/>} />
-                            <Route path="/uchwala" element={<Uchwala />} />
+                            <Route path="/uchwala" element={<Uchwala isAdmin={isAdmin}/>} />
                             <Route path="/harmonogram" element={<Harmonogram />} />
                             <Route path="/usterka" element={<Usterka isAdmin={isAdmin} />} />
                             <Route path="/usterki/admin/:id" element={<Usterka isAdmin={isAdmin} />} />
